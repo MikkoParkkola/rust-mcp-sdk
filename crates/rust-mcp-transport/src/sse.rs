@@ -188,7 +188,9 @@ impl Transport<ClientMessages, MessageFromServer, ClientMessage, ServerMessages,
             IoStream::Writable(Box::pin(tokio::io::stderr())),
             self.pending_requests.clone(),
             self.options.timeout,
+            self.options.max_line_length,
             cancellation_token,
+            self.options.channel_capacity,
         );
 
         if let (Some(session_id), Some(stream_id), Some(event_store)) = (

@@ -6,11 +6,28 @@ use syn::{
 };
 
 pub fn base_crate() -> TokenStream {
-    // Conditionally select the path for Tool
-    if cfg!(feature = "sdk") {
-        quote! { rust_mcp_sdk::schema }
-    } else {
+    // At proc-macro *expansion* time, Cargo sets env vars for the **calling crate** (not for
+    // the proc-macro binary itself). We use CARGO_PKG_NAME to identify the package that is
+    // expanding this macro and pick the correct schema path:
+    //
+    //  • When expanded inside `rust-mcp-sdk` itself → `rust_mcp_sdk::schema`
+    //  • When expanded in `rust-mcp-macros` test/doc binaries (which only depend on
+    //    `rust-mcp-schema`) → `rust_mcp_schema`
+    //  • When expanded in any other crate that depends on `rust-mcp-sdk` (e.g. rust-mcp-extra,
+    //    rust-mcp-axum, rust-mcp-actix, user code) → `rust_mcp_sdk::schema`
+    //
+    // Note: We assume the only consumers of these macros are the macro crate's own tests
+    // or crates going through the full SDK. Standalone usage is not supported.
+    //
+    // We identify "macros-only" usage by checking if the calling package
+    // is `rust-mcp-macros` itself (during its own test compilation).
+    let pkg_name = std::env::var("CARGO_PKG_NAME").unwrap_or_default();
+    if pkg_name == "rust-mcp-macros" {
+        // The macros crate's own tests: only rust-mcp-schema is available as a dev-dep.
         quote! { rust_mcp_schema }
+    } else {
+        // All other consumers go through rust-mcp-sdk, which re-exports schema.
+        quote! { rust_mcp_sdk::schema }
     }
 }
 
@@ -273,15 +290,22 @@ pub fn type_to_json_schema(ty: &Type, attrs: &[Attribute]) -> proc_macro2::Token
                                 return quote! {
                                     {
                                         let mut map = #inner_schema;
-                                        // JSON Schema (Draft 7 / 2020-12) does NOT define "nullable" — that
-                                        // is an OpenAPI 3.0 extension keyword. The MCP spec references JSON
-                                        // Schema for the inputSchema field, and strict validators (notably
-                                        // the Anthropic API tool-call validator used by Claude sub-agents)
-                                        // reject the keyword. Encode "this field may be null" the canonical
-                                        // JSON Schema way: union the existing primitive `type` with "null"
-                                        // (`{"type": ["X", "null"]}`), or fall back to a top-level `anyOf`
-                                        // when the inner schema has no string `type` (e.g. nested object
-                                        // or `$ref` schemas).
+                                        // "nullable" is an OpenAPI 3.0 keyword that JSON Schema
+                                        // (Draft 7 / 2020-12, which MCP references for inputSchema)
+                                        // does not define. A conforming validator ignores it rather
+                                        // than rejecting it, which is exactly the problem: it asserts
+                                        // nothing, so the field still rejects the `null` that serde
+                                        // accepts for Option<T>. Encode nullability canonically instead.
+                                        //
+                                        // Widening `type` works whenever the inner schema has one:
+                                        // scalars, a Vec ("array") and a nested struct ("object") all
+                                        // do, and their type-specific keywords assert only against
+                                        // their own type, so `null` stays valid beside them. A derived
+                                        // enum emits `oneOf`/`enum` with no top-level `type`; there,
+                                        // widening is impossible and would be wrong anyway, since
+                                        // keywords in one schema object are conjunctive and a sibling
+                                        // `enum` would keep rejecting `null`. Wrap those in `anyOf` so
+                                        // the inner assertions stay intact.
                                         match map.get("type").cloned() {
                                             Some(serde_json::Value::String(t)) if t != "null" => {
                                                 map.insert(
@@ -302,7 +326,7 @@ pub fn type_to_json_schema(ty: &Type, attrs: &[Attribute]) -> proc_macro2::Token
                                             _ => {
                                                 // No primitive `type` to extend — wrap in anyOf so the schema
                                                 // remains JSON-Schema-valid.
-                                                let inner = serde_json::Value::Object(map.into_iter().collect());
+                                                let inner = serde_json::Value::Object(map);
                                                 let mut wrapper = serde_json::Map::new();
                                                 wrapper.insert(
                                                     "anyOf".to_string(),
@@ -382,6 +406,18 @@ pub fn type_to_json_schema(ty: &Type, attrs: &[Attribute]) -> proc_macro2::Token
                             #title_quote
                             #min_num_quote
                             #max_num_quote
+                            #default_quote
+                            map
+                        }
+                    };
+                }
+                // Handle imported serde_json::Value (single-segment, mirroring the 2-segment case above)
+                else if ident == "Value" && segment.arguments.is_empty() {
+                    return quote! {
+                        {
+                            let mut map = serde_json::Map::new();
+                            #description_quote
+                            #title_quote
                             #default_quote
                             map
                         }
@@ -526,12 +562,29 @@ pub fn type_to_json_schema(ty: &Type, attrs: &[Attribute]) -> proc_macro2::Token
                         }
                     };
                 }
+                // Handle serde_json::Value — any JSON value; emit empty schema {}
+                if seg0.ident == "serde_json"
+                    && seg0.arguments.is_empty()
+                    && seg1.ident == "Value"
+                    && seg1.arguments.is_empty()
+                {
+                    return quote! {
+                        {
+                            let mut map = serde_json::Map::new();
+                            #description_quote
+                            #title_quote
+                            #default_quote
+                            map
+                        }
+                    };
+                }
             }
-            // Fallback for unknown types
+            // Fallback for unknown types — emit empty schema {} (any value accepted).
+            // An empty schema is always valid JSON Schema; strict MCP clients reject
+            // non-standard type strings like "unknown".
             quote! {
                 {
                     let mut map = serde_json::Map::new();
-                    map.insert("type".to_string(), serde_json::Value::String("unknown".to_string()));
                     #description_quote
                     #title_quote
                     #default_quote
@@ -542,7 +595,6 @@ pub fn type_to_json_schema(ty: &Type, attrs: &[Attribute]) -> proc_macro2::Token
         _ => quote! {
             {
                 let mut map = serde_json::Map::new();
-                map.insert("type".to_string(), serde_json::Value::String("unknown".to_string()));
                 #description_quote
                 #title_quote
                 #default_quote
@@ -952,10 +1004,13 @@ mod tests {
 
     #[test]
     fn test_json_schema_fallback_unknown() {
+        // The fallback for unrecognised types now emits an empty schema {}
+        // (no type key), which is valid JSON Schema meaning "accept any value".
         let ty: syn::Type = parse_quote!((i32, i32));
         let tokens = type_to_json_schema(&ty, &[]);
         let output = render(tokens);
-        assert!(output
+        // Must NOT emit the invalid "unknown" type string
+        assert!(!output
             .contains("\"type\".to_string(),serde_json::Value::String(\"unknown\".to_string())"));
     }
 }
