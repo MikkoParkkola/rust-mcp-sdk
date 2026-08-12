@@ -2,8 +2,8 @@ use async_trait::async_trait;
 use rust_mcp_schema::{
     schema_utils::{MessageFromServer, RequestFromServer},
     CreateTaskResult, ElicitRequestParams, ElicitResult, ElicitResultAction, ElicitResultContent,
-    ElicitResultContentPrimitive, LoggingMessageNotificationParams, PingRequest, RequestParams,
-    RpcError, TaskStatus, TaskStatusNotificationParams,
+    ElicitResultContentPrimitive, LoggingMessageNotificationParams, RequestParams, RpcError,
+    TaskStatus, TaskStatusNotificationParams,
 };
 use rust_mcp_sdk::{
     mcp_client::ClientHandler,

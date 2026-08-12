@@ -14,8 +14,8 @@ pub mod test_server_common {
     use rust_mcp_sdk::mcp_icon;
     use rust_mcp_sdk::mcp_server::hyper_runtime::HyperRuntime;
     use rust_mcp_sdk::schema::{
-        ClientCapabilities, Implementation, InitializeRequest, InitializeRequestParams,
-        InitializeResult, ServerCapabilities, ServerCapabilitiesTools,
+        ClientCapabilities, Implementation, InitializeRequestParams, InitializeResult,
+        ServerCapabilities, ServerCapabilitiesTools,
     };
     use rust_mcp_sdk::task_store::{CreateTaskOptions, ServerTaskCreator};
     use rust_mcp_sdk::{
@@ -105,7 +105,7 @@ pub mod test_server_common {
         async fn handle_list_tools_request(
             &self,
             _params: Option<PaginatedRequestParams>,
-            runtime: Arc<dyn McpServer>,
+            _runtime: Arc<dyn McpServer>,
         ) -> std::result::Result<ListToolsResult, RpcError> {
             Ok(ListToolsResult {
                 meta: None,
@@ -134,9 +134,6 @@ pub mod test_server_common {
                     let tool = DisplayAuthInfo {};
                     Ok(tool.call_tool(runtime.auth_info_cloned().await).unwrap())
                 }
-                _ => Ok(
-                    CallToolError::unknown_tool(format!("Unknown tool: {}", params.name)).into(),
-                ),
                 _ => Ok(
                     CallToolError::unknown_tool(format!("Unknown tool: {}", params.name)).into(),
                 ),

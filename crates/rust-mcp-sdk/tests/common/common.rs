@@ -28,7 +28,13 @@ pub const NPX_SERVER_EVERYTHING: &str = "@modelcontextprotocol/server-everything
 pub const ONE_MILLISECOND: Option<Duration> = Some(Duration::from_millis(1));
 
 #[cfg(unix)]
-pub const UVX_SERVER_GIT: &str = "mcp-server-git";
+pub const UVX_SERVER_GIT_ARGS: &[&str] = &[
+    "--from",
+    "mcp-server-git",
+    "--with",
+    "mcp<2",
+    "mcp-server-git",
+];
 static INIT: Once = Once::new();
 
 pub fn init_tracing() {
@@ -463,7 +469,7 @@ pub mod sample_tools {
         ) -> Result<CallToolResult, CallToolError> {
             for i in 0..self.count {
                 let _ = runtime
-                    .send_logging_message(LoggingMessageNotificationParams {
+                    .notify_log_message(LoggingMessageNotificationParams {
                         data: json!({"id":format!("message {} of {}",i,self.count)}),
                         level: rust_mcp_sdk::schema::LoggingLevel::Emergency,
                         logger: None,
