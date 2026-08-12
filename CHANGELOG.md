@@ -103,7 +103,7 @@
 
 * **auth:** Reuse a shared reqwest::Client with timeouts ([#172](https://github.com/MikkoParkkola/rust-mcp-sdk/issues/172)) ([c644426](https://github.com/MikkoParkkola/rust-mcp-sdk/commit/c64442644076d5dbcd9437245aecff5c36b4fb32))
 * Extract POST body as Bytes ([#166](https://github.com/MikkoParkkola/rust-mcp-sdk/issues/166)) ([352a5fd](https://github.com/MikkoParkkola/rust-mcp-sdk/commit/352a5fd890378181dda1f893e91ef4a5e16d6b63))
-* Remove unnecesarry mutex in the session store ([ea5d580](https://github.com/MikkoParkkola/rust-mcp-sdk/commit/ea5d58013ac051f2bbe7e9f5b3a20a3220e66c9b))
+* Remove unnecessary mutex in the session store ([ea5d580](https://github.com/MikkoParkkola/rust-mcp-sdk/commit/ea5d58013ac051f2bbe7e9f5b3a20a3220e66c9b))
 * Shard session store lock with monotonic time and O(1) capacity check ([#168](https://github.com/MikkoParkkola/rust-mcp-sdk/issues/168)) ([a5181a9](https://github.com/MikkoParkkola/rust-mcp-sdk/commit/a5181a9c62ec95420edd79485654cacd532dbf73))
 
 
