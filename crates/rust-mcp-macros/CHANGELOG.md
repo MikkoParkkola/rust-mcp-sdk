@@ -1,5 +1,57 @@
 # Changelog
 
+## [2.0.0](https://github.com/MikkoParkkola/rust-mcp-sdk/compare/rust-mcp-macros-v1.0.0...rust-mcp-macros-v2.0.0) (2026-08-12)
+
+
+### ⚠ BREAKING CHANGES
+
+* update to rust-mcp-schema 0.10 with BTreeMap for deterministic serialization ([#137](https://github.com/MikkoParkkola/rust-mcp-sdk/issues/137))
+* update to MCP Protocol 2025-11-25, new mcp_icon macro and various improvements ([#120](https://github.com/MikkoParkkola/rust-mcp-sdk/issues/120))
+* implement support for the MCP protocol version 2025-06-18 ([#73](https://github.com/MikkoParkkola/rust-mcp-sdk/issues/73))
+* make rust-mcp-sdk the sole dependency ([#43](https://github.com/MikkoParkkola/rust-mcp-sdk/issues/43))
+* update crates to default to the latest MCP schema version. ([#35](https://github.com/MikkoParkkola/rust-mcp-sdk/issues/35))
+* naming & less constrained dependencies ([#8](https://github.com/MikkoParkkola/rust-mcp-sdk/issues/8))
+
+### 🚀 Features
+
+* Add authentication flow support to MCP servers ([#119](https://github.com/MikkoParkkola/rust-mcp-sdk/issues/119)) ([fe467d3](https://github.com/MikkoParkkola/rust-mcp-sdk/commit/fe467d3661a60b6bb1f9d5b53697c1a94dc77c12))
+* Add elicitation macros and add elicit_input() method ([#99](https://github.com/MikkoParkkola/rust-mcp-sdk/issues/99)) ([3ab5fe7](https://github.com/MikkoParkkola/rust-mcp-sdk/commit/3ab5fe73aaa10de2b5b23caee357ac15b37c845f))
+* Add Streamable HTTP Support to MCP Server ([#76](https://github.com/MikkoParkkola/rust-mcp-sdk/issues/76)) ([1864ce8](https://github.com/MikkoParkkola/rust-mcp-sdk/commit/1864ce85775912ef6062d70cf9a3dcaf18cf7308))
+* Add support for imported serde_json::Number in JsonSchema derive ([#130](https://github.com/MikkoParkkola/rust-mcp-sdk/issues/130)) ([9b2b29e](https://github.com/MikkoParkkola/rust-mcp-sdk/commit/9b2b29ed087d4e6c8a70eab0aeaab202e12b4661))
+* Add support for type aliases in the mcp_tool macro ([#129](https://github.com/MikkoParkkola/rust-mcp-sdk/issues/129)) ([6eab1ac](https://github.com/MikkoParkkola/rust-mcp-sdk/commit/6eab1ac9e1d85adf68a0d92674fa598f46e27f73))
+* Concat support for mcp_tool macro ([#23](https://github.com/MikkoParkkola/rust-mcp-sdk/issues/23)) ([f8bb8f2](https://github.com/MikkoParkkola/rust-mcp-sdk/commit/f8bb8f2563cb0f1c8c693aa7ff400bf137da09d8))
+* Implement support for the MCP protocol version 2025-06-18 ([#73](https://github.com/MikkoParkkola/rust-mcp-sdk/issues/73)) ([6a24f78](https://github.com/MikkoParkkola/rust-mcp-sdk/commit/6a24f782a7314c3adf302e0c24b42d3fcaae8753))
+* Improve schema version configuration using Cargo features ([#51](https://github.com/MikkoParkkola/rust-mcp-sdk/issues/51)) ([836e765](https://github.com/MikkoParkkola/rust-mcp-sdk/commit/836e765613bcaf61b71bb8e0ffe7c9e2877feb22))
+* Initial release v0.1.0 ([4c08beb](https://github.com/MikkoParkkola/rust-mcp-sdk/commit/4c08beb73b102c77e65b724b284008071b7f5ef4))
+* Introduce mcp_resource and mcp_resource_template macros with documentation and examples (issue [#79](https://github.com/MikkoParkkola/rust-mcp-sdk/issues/79)) ([#123](https://github.com/MikkoParkkola/rust-mcp-sdk/issues/123)) ([6dc3500](https://github.com/MikkoParkkola/rust-mcp-sdk/commit/6dc35003692954ae5b627c44598655b02670f05d))
+* Make rust-mcp-sdk the sole dependency ([#43](https://github.com/MikkoParkkola/rust-mcp-sdk/issues/43)) ([d1973ca](https://github.com/MikkoParkkola/rust-mcp-sdk/commit/d1973ca037c1c6367261bb48a9a4ec89c3a448ac))
+* Multi protocol version - phase 1 ([#49](https://github.com/MikkoParkkola/rust-mcp-sdk/issues/49)) ([4c4daf0](https://github.com/MikkoParkkola/rust-mcp-sdk/commit/4c4daf0b1dce2554ecb7ed4fb723a1c3dd07e541))
+* Re-export transport and macros for seamless user experience ([#4](https://github.com/MikkoParkkola/rust-mcp-sdk/issues/4)) ([ff9e3af](https://github.com/MikkoParkkola/rust-mcp-sdk/commit/ff9e3af0e43a6e915f968445b1fbdb54a5069a8b))
+* Update crates to default to the latest MCP schema version. ([#35](https://github.com/MikkoParkkola/rust-mcp-sdk/issues/35)) ([6cbc3da](https://github.com/MikkoParkkola/rust-mcp-sdk/commit/6cbc3da9d99d62723643000de74c4bd9e48fa4b4))
+* Update to MCP Protocol 2025-11-25, new mcp_icon macro and various improvements ([#120](https://github.com/MikkoParkkola/rust-mcp-sdk/issues/120)) ([e70f8b7](https://github.com/MikkoParkkola/rust-mcp-sdk/commit/e70f8b7e9d4ef028e66d4cd1bf5cd4c96d81adf9))
+* Update to rust-mcp-schema 0.10 with BTreeMap for deterministic serialization ([#137](https://github.com/MikkoParkkola/rust-mcp-sdk/issues/137)) ([2e6df18](https://github.com/MikkoParkkola/rust-mcp-sdk/commit/2e6df18de13d590a5dae527e90e115c81c658900))
+
+
+### 🐛 Bug Fixes
+
+* Exclude assets from published packages ([#70](https://github.com/MikkoParkkola/rust-mcp-sdk/issues/70)) ([0b73873](https://github.com/MikkoParkkola/rust-mcp-sdk/commit/0b738738939708449d9037abbc563d9470f55f8a))
+* **macros:** Emit JSON-Schema-canonical type union for Option&lt;T&gt; instead of OpenAPI nullable ([#1](https://github.com/MikkoParkkola/rust-mcp-sdk/issues/1)) ([0f9251b](https://github.com/MikkoParkkola/rust-mcp-sdk/commit/0f9251b88e877934276f01095360b65e3436055f))
+* **macros:** Emit Option&lt;T&gt; as a JSON Schema type union instead of the OpenAPI nullable keyword ([#200](https://github.com/MikkoParkkola/rust-mcp-sdk/issues/200)) ([4444c6c](https://github.com/MikkoParkkola/rust-mcp-sdk/commit/4444c6cd381822b83b7fa0d7f21d77e1d6fdc9a4))
+* **macros:** Emit valid schemas for unrestricted JSON values ([#218](https://github.com/MikkoParkkola/rust-mcp-sdk/issues/218)) ([e4f0af8](https://github.com/MikkoParkkola/rust-mcp-sdk/commit/e4f0af8f8d1eff458386fc9b63e8fcae5370043a))
+* Update crate readme links and docs ([#2](https://github.com/MikkoParkkola/rust-mcp-sdk/issues/2)) ([4f8a5b7](https://github.com/MikkoParkkola/rust-mcp-sdk/commit/4f8a5b74559b97bf9e7229c120c383caf7f53a36))
+* Upgrade dependencies to fix security vulnerabilities ([19473ee](https://github.com/MikkoParkkola/rust-mcp-sdk/commit/19473ee0e9e51a18a4ee80ce23881f61346d7d17))
+
+
+### 📚 Documentation
+
+* Documentation audit, examples upgrade, and test stabilization ([#174](https://github.com/MikkoParkkola/rust-mcp-sdk/issues/174)) ([667e522](https://github.com/MikkoParkkola/rust-mcp-sdk/commit/667e522f407291b34ec16b8fbd4068586207f2b6))
+* Prepare v0.10.0 release ,upgrading.md, and migration guide ([#175](https://github.com/MikkoParkkola/rust-mcp-sdk/issues/175)) ([4086a08](https://github.com/MikkoParkkola/rust-mcp-sdk/commit/4086a08742b1d46ff8abb17ce3796727de8e6ec3))
+
+
+### 🚜 Code Refactoring
+
+* Naming & less constrained dependencies ([#8](https://github.com/MikkoParkkola/rust-mcp-sdk/issues/8)) ([2aa469b](https://github.com/MikkoParkkola/rust-mcp-sdk/commit/2aa469b1f7f53f6cda23141c961467ece738047e))
+
 ## [1.0.0](https://github.com/rust-mcp-stack/rust-mcp-sdk/compare/rust-mcp-macros-v0.9.1...rust-mcp-macros-v1.0.0) (2026-07-25)
 
 
