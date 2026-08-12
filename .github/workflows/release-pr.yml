@@ -28,7 +28,7 @@ jobs:
         env:
           ACTIONS_STEP_DEBUG: true
         with:
-          token: ${{ secrets.RP_SECRET }}
+          token: ${{ secrets.GITHUB_TOKEN }}
           config-file: .release-config.json
           manifest-file: .release-manifest.json
 
@@ -36,7 +36,7 @@ jobs:
         if: ${{ steps.release.outputs.prs_created }}
         run: |
           BRANCH=$(echo '${{ steps.release.outputs.pr }}' | jq -r '.headBranchName')
-          echo "BRANCH=$BRANCH" >> $GITHUB_ENV
+          echo "BRANCH=$BRANCH" >> "$GITHUB_ENV"
 
       - name: Update release PR files
         if: ${{ steps.release.outputs.prs_created }}
@@ -44,7 +44,7 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git fetch
-          git checkout $BRANCH
+          git checkout "$BRANCH"
 
           echo "Updating root Cargo.toml"
           sed -i -e "s/rust-mcp-sdk = { version *= *\"[^\"]*\",/rust-mcp-sdk = { version = \"$(grep '^version = ' crates/rust-mcp-sdk/Cargo.toml | cut -d' ' -f3 | tr -d '\"')\",/" \
