@@ -1200,7 +1200,9 @@ mod polling_tests {
         });
 
         let store = InMemoryTaskStore::<serde_json::Value, serde_json::Value>::new(None);
-        store.start_task_polling(callback);
+        store
+            .start_task_polling(callback)
+            .expect("polling should start once");
 
         store
             .create_task(
@@ -1247,7 +1249,9 @@ mod polling_tests {
         });
 
         let store = InMemoryTaskStore::<serde_json::Value, serde_json::Value>::new(None);
-        store.start_task_polling(callback);
+        store
+            .start_task_polling(callback)
+            .expect("polling should start once");
 
         let task_a = store
             .create_task(
