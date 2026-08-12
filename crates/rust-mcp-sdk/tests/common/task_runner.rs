@@ -7,7 +7,7 @@ use std::{
 use rust_mcp_macros::JsonSchema;
 use rust_mcp_schema::{Task, TaskStatus};
 use rust_mcp_sdk::{
-    task_store::{ClientTaskStore, ServerTaskStore, TaskStore},
+    task_store::{ClientTaskStore, ServerTaskStore},
     SessionId,
 };
 use tokio::{sync::Mutex, task::JoinHandle, time::sleep};

@@ -1,5 +1,5 @@
 #[cfg(unix)]
-use common::UVX_SERVER_GIT;
+use common::UVX_SERVER_GIT_ARGS;
 use common::{test_client_info, TestClientHandler, NPX_SERVER_EVERYTHING};
 use rust_mcp_sdk::{
     mcp_client::{client_runtime, McpClientOptions},
@@ -46,7 +46,10 @@ async fn tets_client_launch_uvx_server() {
     // provided that `uvx` is installed and accessible in the system's PATH
     let transport = StdioTransport::create_with_server_launch(
         "uvx",
-        vec![UVX_SERVER_GIT.into()],
+        UVX_SERVER_GIT_ARGS
+            .iter()
+            .map(ToString::to_string)
+            .collect(),
         None,
         TransportOptions::default(),
     )
